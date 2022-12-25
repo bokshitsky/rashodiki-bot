@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 
@@ -13,6 +14,8 @@ from rashodiki_bot.settings import settings
 
 Base = declarative_base()
 
+DEFAULT_WORKSHEET = "rashodiki"
+
 
 class Chat(Base):
     __tablename__ = "chat"
@@ -21,6 +24,9 @@ class Chat(Base):
     worksheet_name: str = Column(Text(), nullable=True)
     default_currency: str = Column(Text(), nullable=True)
     creation_time: datetime = Column(DateTime(True), nullable=False)
+
+    def get_worksheet_name(self):
+        return self.worksheet_name or DEFAULT_WORKSHEET
 
 
 async def run_alembic_migration(*args):
@@ -54,3 +60,19 @@ def _load_alembic_config():
     alembic_cfg.set_main_option("script_location", str(app_dir.joinpath("alembic")))
     alembic_cfg.set_main_option("sqlalchemy.url", settings().db_url)
     return alembic_cfg
+
+
+CURRENCY_LIST = ["рубль", "драм", "доллар", "евро", "лари", "бат", "тенге", "шекель"]
+
+
+@dataclass
+class TransferInfo:
+    amount: int
+    currency: str
+    description: str
+
+
+class ResponseException(RuntimeError):
+    def __init__(self, text, reply=False):
+        self.text = text
+        self.reply = reply

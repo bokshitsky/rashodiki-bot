@@ -136,3 +136,4 @@ dmypy.json
 
 *.secret.json
 database.db
+rashodiki_test.db
