@@ -1,0 +1,16 @@
+version: '3.7'
+
+services:
+
+  rashodiki_bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    entrypoint: [ "poetry", "run", "python", "-m", "rashodiki_bot.main" ]
+
+    environment:
+      - RASHODIKI_ENV_FILE=mount/config.env
+
+    volumes:
+      - ./mount:/rashodiki/mount:rw
