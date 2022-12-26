@@ -14,5 +14,5 @@ async def remove_last(message: types.Message, state: FSMContext):
 
     removed = await wb_service.remove_last(chat)
     if not removed:
-        return await message.edit_text(text="Не нашел, что удалить")
+        return await msg.edit_text(text="Не нашел, что удалить")
     await msg.edit_text(text=f"Удалил: {abs(removed.amount)} {removed.currency} {removed.description}")

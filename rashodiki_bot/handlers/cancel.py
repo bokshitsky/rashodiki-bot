@@ -13,4 +13,4 @@ async def cancel_handler(message: types.Message, state: FSMContext):
         return
 
     await state.finish()
-    await message.answer("Отменяю", reply_markup=types.ReplyKeyboardRemove())
+    await message.answer("Отменил", reply_markup=types.ReplyKeyboardRemove())

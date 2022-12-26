@@ -12,6 +12,7 @@ def main():
                 BotCommand(command="/remove", description="Удалить последнюю запись"),
                 BotCommand(command="/settings", description="Поменять настройки"),
                 BotCommand(command="/start", description="Начать работу"),
+                BotCommand(command="/cancel", description="Отменить действие, если что-то пошло не так и бот завис"),
             ]
         )
 

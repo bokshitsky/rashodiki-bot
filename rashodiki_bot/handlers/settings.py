@@ -28,12 +28,12 @@ async def select_settings_action(message: types.Message, state: FSMContext):
 @dispatcher.message_handler(state=Settings.select_setting, text="Workbook")
 async def choose_workbook(message: types.Message, state: FSMContext):
     await message.answer(
-        f"Пришли ссылку на workbook.\n"
-        f'Ссылка выглядит: `https://docs.google.com/spreadsheets...`"\n\n'
-        f"Он должен быть доступен на редактирование юзеру `{bot_google_email}`\n(либо доступен всем на редактирование "
-        f"по ссылке)",
+        f"Пришли ссылку на таблицу.\n"
+        f'Ссылка выглядит так: `https://docs.google.com/spreadsheets...`"\n\n'
+        f"В ней должно быть доступно редактирование юзеру `{bot_google_email}`\n"
+        f"(либо таблица должна быть доступна всем на редактирование по ссылке)",
         parse_mode=ParseMode.MARKDOWN,
-        reply_markup=types.ReplyKeyboardRemove()
+        reply_markup=types.ReplyKeyboardRemove(),
     )
     await Settings.set_workbook.set()
 
@@ -50,7 +50,7 @@ async def set_workbook(message: types.Message, state: FSMContext):
 
 @dispatcher.message_handler(state=Settings.set_workbook)
 async def set_workbook(message: types.Message, state: FSMContext):
-    await message.reply('Это не ссылка на workbook, ссылка должна содержать "https://docs.google.com/spreadsheets..."')
+    await message.reply('Это плохая ссылка таблицу, ссылка должна содержать "https://docs.google.com/spreadsheets..."')
 
 
 @dispatcher.message_handler(state=Settings.select_setting, text="Worksheet")

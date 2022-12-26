@@ -1,3 +1,4 @@
+import collections
 from datetime import datetime
 
 import gspread_asyncio
@@ -24,7 +25,12 @@ class WbService:
         await self.try_authorize()
         worksheet = await self.get_worksheet(chat)
         row = [str(date), username, row.amount, row.currency, row.description]
-        await worksheet.insert_row(row, index=2)
+        try:
+            await worksheet.insert_row(row, index=2)
+        except APIError:
+            raise ResponseException(
+                f"Не получается добавить данные на лист `{worksheet.title}`, проверь настройки доступа"
+            )
 
     async def remove_last(self, chat: Chat) -> TransferInfo | None:
         await self.try_authorize()
@@ -36,13 +42,29 @@ class WbService:
         await worksheet.delete_row(index=2)
         return TransferInfo(amount=int(row[2]), currency=row[3], description=row[4])
 
+    async def get_last_description(self, chat: Chat) -> list[str]:
+        worksheet = await self.get_worksheet(chat)
+        values = await worksheet.get_values("E2:E10")
+        return list(collections.OrderedDict.fromkeys(k[0] for k in values).keys())
+
     async def get_worksheet(self, chat: Chat):
         wb = await self.get_workbook(chat.workbook_url)
         sheet = chat.get_worksheet_name()
         try:
             return await wb.worksheet(sheet)
         except WorksheetNotFound:
-            return await wb.add_worksheet(sheet, rows=500, cols=15)
+            try:
+                return await wb.add_worksheet(sheet, rows=500, cols=15)
+            except APIError:
+                raise ResponseException(
+                    f"Не получается создать лист с именем `{sheet}`\n"
+                    f"Проверь настройки доступа к таблице и саму ссылку через /settings"
+                )
+        except APIError:
+            raise ResponseException(
+                "Ошибка при обращении к таблице, проверь её настройки доступа и "
+                "правильную ли ссылку сохранил через /settings"
+            )
 
     async def get_workbook(self, workbook_url: str):
         await self.try_authorize()
@@ -50,7 +72,7 @@ class WbService:
             return await self.agc.open_by_url(workbook_url)
         except APIError:
             raise ResponseException(
-                "Ошибка при обращении к воркбуку, проверь его настройки доступа и "
+                "Ошибка при обращении к таблице, проверь его настройки доступа и "
                 "правильную ли ссылку сохранил через /settings"
             )
 

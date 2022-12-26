@@ -55,11 +55,16 @@ async def amount_chosen(message: types.Message, state: FSMContext):
 @dispatcher.message_handler(state=MoneyTransfer.select_currency)
 async def currency_chosen(message: types.Message, state: FSMContext):
     await state.update_data(currency=message.text.strip())
+    # chat = await get_chat(message)
     await MoneyTransfer.select_description.set()
+    # last_values = await wb_service.get_last_description(chat)
+
+    # markup = types.ReplyKeyboardMarkup(resize_keyboard=True, selective=True, one_time_keyboard=True, row_width=4)
+    # markup.add(*last_values)
 
     data = await state.get_data()
     msg = "Источник дохода?" if data["amount"] > 0 else "На что потратил?"
-    await message.reply(f"{msg}", reply_markup=types.ReplyKeyboardRemove())
+    await message.reply(f"{msg}")
 
 
 @dispatcher.message_handler(state=MoneyTransfer.select_description)
@@ -74,6 +79,6 @@ async def description_chosen(message: types.Message, state: FSMContext):
 
     text = f"Записываю: {shown_amount} {transfer_info.currency} {transfer_info.description}..."
     msg = await message.reply(text=text)
-    await wb_service.save_spend(chat, message.date, message.chat.username, transfer_info)
     await state.finish()
+    await wb_service.save_spend(chat, message.date, message.chat.username, transfer_info)
     await msg.edit_text(f"Записал: {shown_amount} {transfer_info.currency} {transfer_info.description}")
