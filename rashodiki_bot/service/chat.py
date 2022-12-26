@@ -29,7 +29,7 @@ class ChatService:
 
     @transactional
     async def add_chat(self, chat_id: int):
-        chat = Chat(chat_id=chat_id, creation_time=datetime.now())
+        chat = Chat(chat_id=chat_id, creation_time=datetime.now(), workbook_url=None)
         get_current_session().add(chat)
         await get_current_session().flush()
         return chat

@@ -20,8 +20,8 @@ DEFAULT_WORKSHEET = "rashodiki"
 class Chat(Base):
     __tablename__ = "chat"
     chat_id: int = Column(BigInteger(), primary_key=True)
-    workbook_url: str = Column(Text(), nullable=True)
-    worksheet_name: str = Column(Text(), nullable=True)
+    workbook_url: str | None = Column(Text(), nullable=True)
+    worksheet_name: str | None = Column(Text(), nullable=True)
     default_currency: str = Column(Text(), nullable=True)
     creation_time: datetime = Column(DateTime(True), nullable=False)
 

@@ -24,6 +24,7 @@ async def handle_start(message: types.Message, state: FSMContext):
     if chat is None:
         chat = await chat_service.add_chat(message.chat.id)
         await message.answer("Зарегал тебя в системе")
+        chat = await chat_service.get_chat(message.chat.id)
 
     if chat.workbook_url is None:
         await message.answer("Теперь нужно привязать гугловую таблицу, куда я буду сохранять данные.")
